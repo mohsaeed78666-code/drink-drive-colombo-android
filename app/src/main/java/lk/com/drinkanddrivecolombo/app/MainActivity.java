@@ -69,9 +69,9 @@ public final class MainActivity extends ComponentActivity {
                 );
                 android.graphics.Insets ime = insets.getInsets(WindowInsets.Type.ime());
                 view.setPadding(
-                        Math.max(bars.left, bars.right == 0 ? bars.left : 0),
+                        bars.left,
                         bars.top,
-                        Math.max(bars.right, 0),
+                        bars.right,
                         Math.max(bars.bottom, ime.bottom)
                 );
                 return WindowInsets.CONSUMED;
