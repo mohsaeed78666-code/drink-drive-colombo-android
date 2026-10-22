@@ -1,0 +1,38 @@
+name: Phase 1 platform prototype checks
+on:
+  pull_request:
+    paths:
+      - 'phase1-platform/**'
+      - '.github/workflows/phase1-platform-check.yml'
+  push:
+    branches: [main, 'feature/phase-1-startup-mvp']
+    paths:
+      - 'phase1-platform/**'
+      - '.github/workflows/phase1-platform-check.yml'
+permissions:
+  contents: read
+jobs:
+  pricing-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: phase1-platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - name: Parse JavaScript modules
+        run: |
+          node --check app.js
+          node --check pricing.js
+          node --check service-worker.js
+      - name: Validate application files
+        run: |
+          test -s index.html
+          test -s styles.css
+          test -s app.js
+          test -s pricing.js
+          test -s manifest.webmanifest
+          test -s service-worker.js

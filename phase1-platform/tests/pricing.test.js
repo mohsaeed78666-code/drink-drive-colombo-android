@@ -1,0 +1,6 @@
+import test from "node:test";import assert from "node:assert/strict";import {calculateFare,validateRates} from "../pricing.js";const rates={baseFare:1500,perKmRate:250,inboundRate:100,commissionPercent:15};
+test("fare includes base, drive and inbound transit",()=>{const f=calculateFare({distanceKm:10,inboundKm:3,rates});assert.equal(f.total,4300);assert.equal(f.commission,645);assert.equal(f.driverShare,3655);});
+test("zero inbound distance is valid",()=>{assert.equal(calculateFare({distanceKm:1,inboundKm:0,rates}).total,1750);});
+test("invalid distance is rejected",()=>{assert.throws(()=>calculateFare({distanceKm:0,inboundKm:1,rates}),RangeError);assert.throws(()=>calculateFare({distanceKm:1,inboundKm:101,rates}),RangeError);});
+test("pricing limits match blueprint ranges",()=>{assert.throws(()=>validateRates({...rates,baseFare:1499}),RangeError);assert.throws(()=>validateRates({...rates,perKmRate:351}),RangeError);assert.throws(()=>validateRates({...rates,inboundRate:99}),RangeError);assert.throws(()=>validateRates({...rates,commissionPercent:21}),RangeError);});
+test("commission and driver share reconcile",()=>{for(let c=15;c<=20;c++){const f=calculateFare({distanceKm:27.5,inboundKm:4.5,rates:{baseFare:2500,perKmRate:350,inboundRate:150,commissionPercent:c}});assert.equal(f.commission+f.driverShare,f.total);}});
