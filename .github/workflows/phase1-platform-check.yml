@@ -23,6 +23,11 @@ jobs:
         with:
           node-version: '22'
       - run: npm test
+      - name: Parse JavaScript modules
+        run: |
+          node --check app.js
+          node --check pricing.js
+          node --check service-worker.js
       - name: Validate application files
         run: |
           test -s index.html
