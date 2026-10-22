@@ -1,6 +1,7 @@
 package lk.com.drinkanddrivecolombo.app;
 
-import android.app.Activity;
+import androidx.activity.ComponentActivity;
+import androidx.activity.OnBackPressedCallback;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,9 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.webkit.CookieManager;
-import android.webkit.SafeBrowsingResponse;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -23,7 +22,7 @@ import android.widget.Toast;
 import java.net.URISyntaxException;
 import java.util.Locale;
 
-public final class MainActivity extends Activity {
+public final class MainActivity extends ComponentActivity {
     private static final String START_URL = "https://www.drinkanddrivecolombo.com.lk/";
     private static final String ROOT_DOMAIN = "drinkanddrivecolombo.com.lk";
     private static final int BRAND_NAVY = Color.rgb(6, 16, 26);
@@ -33,6 +32,17 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (webView != null && webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    finish();
+                }
+            }
+        });
 
         Window window = getWindow();
         window.setStatusBarColor(BRAND_NAVY);
@@ -155,15 +165,6 @@ public final class MainActivity extends Activity {
 
     private void showNoHandlerMessage() {
         Toast.makeText(this, "No app is available to open this link.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override

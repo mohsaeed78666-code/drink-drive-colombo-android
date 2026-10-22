@@ -36,3 +36,7 @@ android {
         abortOnError = true
     }
 }
+
+dependencies {
+    implementation("androidx.activity:activity:1.13.0")
+}
