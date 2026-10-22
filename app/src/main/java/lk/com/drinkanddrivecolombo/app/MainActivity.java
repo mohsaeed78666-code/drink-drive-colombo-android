@@ -2,6 +2,10 @@ package lk.com.drinkanddrivecolombo.app;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.view.Window;
-import android.view.WindowInsets;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -52,9 +55,7 @@ public final class MainActivity extends ComponentActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.setNavigationBarContrastEnforced(false);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false);
-        }
+        WindowCompat.setDecorFitsSystemWindows(window, false);
 
         FrameLayout rootLayout = new FrameLayout(this);
         rootLayout.setBackgroundColor(BRAND_NAVY);
@@ -73,26 +74,23 @@ public final class MainActivity extends ComponentActivity {
         );
         rootLayout.addView(webView, webParams);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            rootLayout.setOnApplyWindowInsetsListener((view, insets) -> {
-                android.graphics.Insets bars = insets.getInsets(
-                        WindowInsets.Type.statusBars()
-                                | WindowInsets.Type.navigationBars()
-                                | WindowInsets.Type.displayCutout()
-                );
-                android.graphics.Insets ime = insets.getInsets(WindowInsets.Type.ime());
-                FrameLayout.LayoutParams params =
-                        (FrameLayout.LayoutParams) webView.getLayoutParams();
-                params.setMargins(
-                        bars.left,
-                        bars.top,
-                        bars.right,
-                        Math.max(bars.bottom, ime.bottom)
-                );
-                webView.setLayoutParams(params);
-                return WindowInsets.CONSUMED;
-            });
-        }
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout, (view, insets) -> {
+            Insets bars = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars()
+                            | WindowInsetsCompat.Type.displayCutout()
+            );
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+
+            // Pad the outer container so the WebView viewport itself starts below
+            // the status bar, rather than letting fixed website headers draw behind it.
+            rootLayout.setPadding(
+                    bars.left,
+                    bars.top,
+                    bars.right,
+                    Math.max(bars.bottom, ime.bottom)
+            );
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -123,7 +121,7 @@ public final class MainActivity extends ComponentActivity {
         WebView.setWebContentsDebuggingEnabled(false);
 
         setContentView(rootLayout);
-        rootLayout.requestApplyInsets();
+        ViewCompat.requestApplyInsets(rootLayout);
         webView.loadUrl(START_URL);
     }
 
