@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.webkit.CookieManager;
@@ -54,29 +56,42 @@ public final class MainActivity extends ComponentActivity {
             window.setDecorFitsSystemWindows(false);
         }
 
+        FrameLayout rootLayout = new FrameLayout(this);
+        rootLayout.setBackgroundColor(BRAND_NAVY);
+        rootLayout.setFitsSystemWindows(false);
+
         webView = new WebView(this);
         webView.setBackgroundColor(BRAND_NAVY);
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         webView.setFocusable(true);
         webView.setFocusableInTouchMode(true);
+        webView.setFitsSystemWindows(false);
+
+        FrameLayout.LayoutParams webParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        rootLayout.addView(webView, webParams);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            webView.setOnApplyWindowInsetsListener((view, insets) -> {
+            rootLayout.setOnApplyWindowInsetsListener((view, insets) -> {
                 android.graphics.Insets bars = insets.getInsets(
                         WindowInsets.Type.statusBars()
                                 | WindowInsets.Type.navigationBars()
                                 | WindowInsets.Type.displayCutout()
                 );
                 android.graphics.Insets ime = insets.getInsets(WindowInsets.Type.ime());
-                view.setPadding(
+                FrameLayout.LayoutParams params =
+                        (FrameLayout.LayoutParams) webView.getLayoutParams();
+                params.setMargins(
                         bars.left,
                         bars.top,
                         bars.right,
                         Math.max(bars.bottom, ime.bottom)
                 );
+                webView.setLayoutParams(params);
                 return WindowInsets.CONSUMED;
             });
-            webView.setFitsSystemWindows(false);
         }
 
         WebSettings settings = webView.getSettings();
@@ -107,7 +122,8 @@ public final class MainActivity extends ComponentActivity {
         webView.setWebChromeClient(new WebChromeClient());
         WebView.setWebContentsDebuggingEnabled(false);
 
-        setContentView(webView);
+        setContentView(rootLayout);
+        rootLayout.requestApplyInsets();
         webView.loadUrl(START_URL);
     }
 
