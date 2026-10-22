@@ -1,0 +1,6 @@
+.firebase/
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+*.local
