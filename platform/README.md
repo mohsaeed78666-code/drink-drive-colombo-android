@@ -14,7 +14,7 @@ Requirements: Node.js 22 and npm.
 
 ```sh
 cd platform/functions
-npm ci
+npm install
 npm test
 ```
 
