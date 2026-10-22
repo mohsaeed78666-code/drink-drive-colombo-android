@@ -1,0 +1,33 @@
+name: Deploy Phase 1 prototype preview
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'phase1-platform/**'
+      - '.github/workflows/phase1-platform-deploy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: phase1-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Phase 1 static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: phase1-platform
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
