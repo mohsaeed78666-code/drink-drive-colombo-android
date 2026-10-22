@@ -30,3 +30,6 @@ GitHub Actions runs Android lint and builds the debug APK on pushes to `main`. D
 - The original website supplies the complete page design and content; the app does not modify the website. External links open in the relevant Android app/browser.
 
 The CI debug APK is signed for local installation/testing. Publishing to Google Play requires a separately signed release bundle and completion of Play Console requirements.
+
+
+The repository includes the Gradle 8.13 wrapper so Android Studio and CI can use the same Gradle version.
