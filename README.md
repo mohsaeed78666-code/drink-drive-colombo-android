@@ -33,3 +33,5 @@ The CI debug APK is signed for local installation/testing. Publishing to Google 
 
 
 The repository includes the Gradle 8.13 wrapper so Android Studio and CI can use the same Gradle version.
+
+Back navigation uses AndroidX's predictive-back-compatible dispatcher.
