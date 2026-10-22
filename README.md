@@ -4,25 +4,29 @@ This repository contains a lightweight Android app for the existing website. The
 
 ## Build
 
-Open this folder in Android Studio with Android SDK 36 and JDK 17 installed, then sync the Gradle project and run the `app` configuration on an Android device or emulator.
+Open this folder in Android Studio with Android SDK 36 and JDK 17 installed, then sync the project using the included Gradle wrapper (Gradle 8.13).
 
-The GitHub Actions workflow builds and lint-checks the debug APK on pushes to `main` and manual workflow runs. Download the generated `Drink-Drive-Colombo-debug-apk` artifact from the workflow run's **Artifacts** section.
-
-## Verify locally
-
-With JDK 17, Android SDK 36, and Gradle 8.13 installed, run:
+On macOS/Linux, run:
 
 ```sh
-gradle --no-daemon clean lintDebug assembleDebug
+./gradlew --no-daemon clean lintDebug assembleDebug
 ```
 
-The APK output is `app/build/outputs/apk/debug/app-debug.apk`.
+On Windows, run:
+
+```bat
+gradlew.bat --no-daemon clean lintDebug assembleDebug
+```
+
+The debug APK output is `app/build/outputs/apk/debug/app-debug.apk`.
+
+GitHub Actions runs Android lint and builds the debug APK on pushes to `main`. Download `Drink-Drive-Colombo-debug-apk` from the successful workflow run's **Artifacts** section.
 
 ## App details
 
 - Package: `lk.com.drinkanddrivecolombo.app`
 - Minimum Android: API 23 (Android 6.0)
 - Target Android: API 36 (Android 16)
-- Website UI stays on the original website; external links open in their relevant Android app/browser.
+- The original website supplies the complete page design and content; the app does not modify the website. External links open in the relevant Android app/browser.
 
-The CI debug APK is for installation/testing. Publishing to Google Play requires a separately signed release bundle and completion of Play Console requirements.
+The CI debug APK is signed for local installation/testing. Publishing to Google Play requires a separately signed release bundle and completion of Play Console requirements.
