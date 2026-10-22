@@ -62,16 +62,21 @@ public final class MainActivity extends ComponentActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             webView.setOnApplyWindowInsetsListener((view, insets) -> {
-                int insetTypes = WindowInsets.Type.systemBars() | WindowInsets.Type.ime();
-                android.graphics.Insets safeInsets = insets.getInsets(insetTypes);
-                view.setPadding(
-                        safeInsets.left,
-                        safeInsets.top,
-                        safeInsets.right,
-                        safeInsets.bottom
+                android.graphics.Insets bars = insets.getInsets(
+                        WindowInsets.Type.statusBars()
+                                | WindowInsets.Type.navigationBars()
+                                | WindowInsets.Type.displayCutout()
                 );
-                return insets;
+                android.graphics.Insets ime = insets.getInsets(WindowInsets.Type.ime());
+                view.setPadding(
+                        Math.max(bars.left, bars.right == 0 ? bars.left : 0),
+                        bars.top,
+                        Math.max(bars.right, 0),
+                        Math.max(bars.bottom, ime.bottom)
+                );
+                return WindowInsets.CONSUMED;
             });
+            webView.setFitsSystemWindows(false);
         }
 
         WebSettings settings = webView.getSettings();
